@@ -51,57 +51,83 @@ module lab_top # (
 
     logic [3:0] red_4, green_4, blue_4;
 
+    // Game parameters
+    parameter PADDLE_WIDTH = 60;
+    parameter PADDLE_HEIGHT = 10;
+    parameter BALL_SIZE = 10;
+    parameter PADDLE_Y_POS = 440;  // Paddle position from bottom
+    parameter BALL_SPEED = 1;
+
+    // Game state registers
+    logic [w_x-1:0] paddle_x;      // Paddle position
+    logic [w_x-1:0] ball_x;        // Ball position
+    logic [w_y-1:0] ball_y;
+    logic [w_x-1:0] ball_dx;       // Ball direction
+    logic [w_y-1:0] ball_dy;
+    
+    // Game logic
+    always_ff @(posedge slow_clk or posedge rst) begin
+        if (rst) begin
+            // Initialize game state
+            paddle_x <= (screen_width - PADDLE_WIDTH) / 2;
+            ball_x <= screen_width / 2;
+            ball_y <= screen_height / 2;
+            ball_dx <= BALL_SPEED;
+            ball_dy <= BALL_SPEED;
+        end else begin
+            // Move paddle based on switches
+            if (sw[0] && paddle_x > 0)  // Move left
+                paddle_x <= paddle_x - 2;
+            if (sw[1] && paddle_x < (screen_width - PADDLE_WIDTH))  // Move right
+                paddle_x <= paddle_x + 2;
+
+            // Update ball position
+            ball_x <= ball_x + ball_dx;
+            ball_y <= ball_y + ball_dy;
+
+            // Ball collision with walls
+            if (ball_x <= 0 || ball_x >= (screen_width - BALL_SIZE))
+                ball_dx <= -ball_dx;
+            if (ball_y <= 0)
+                ball_dy <= -ball_dy;
+
+            // Ball collision with paddle
+            if (ball_y >= PADDLE_Y_POS - BALL_SIZE &&
+                ball_y <= PADDLE_Y_POS + PADDLE_HEIGHT &&
+                ball_x >= paddle_x - BALL_SIZE &&
+                ball_x <= paddle_x + PADDLE_WIDTH) begin
+                ball_dy <= -ball_dy;
+            end
+
+            // Reset ball if it goes below paddle
+            if (ball_y >= screen_height) begin
+                ball_x <= screen_width / 2;
+                ball_y <= screen_height / 2;
+            end
+        end
+    end
+
+    // Display logic
     always_comb begin
         red_4   = '0;
         green_4 = '0;
         blue_4  = '0;
 
         if (x < screen_width && y < screen_height) begin
-            // Letter K
-            if (((x >= 100 && x <= 120) && (y >= 100 && y <= 300)) ||  // Vertical line
-                ((x >= 120 && x <= 180) && (y >= 190 && y <= 210)) ||  // Middle horizontal
-                ((x >= 120 && x <= 180) && (y - 190 <= -x + 300)) ||   // Upper diagonal
-                ((x >= 120 && x <= 180) && (y - 190 >= x - 300)))      // Lower diagonal
-            begin
+            // Draw paddle
+            if (y >= PADDLE_Y_POS && y <= (PADDLE_Y_POS + PADDLE_HEIGHT) &&
+                x >= paddle_x && x <= (paddle_x + PADDLE_WIDTH)) begin
                 red_4   = 4'hF;
-                green_4 = 4'h0;
+                green_4 = 4'hF;
                 blue_4  = 4'hF;
             end
-            // Letter I
-            else if ((x >= 200 && x <= 220) && (y >= 100 && y <= 300))
-            begin
+            
+            // Draw ball
+            else if (x >= ball_x && x <= (ball_x + BALL_SIZE) &&
+                     y >= ball_y && y <= (ball_y + BALL_SIZE)) begin
                 red_4   = 4'hF;
                 green_4 = 4'h0;
-                blue_4  = 4'hF;
-            end
-            // Letter R
-            else if (((x >= 240 && x <= 260) && (y >= 100 && y <= 300)) ||  // Vertical line
-                    ((x >= 260 && x <= 300) && (y >= 100 && y <= 120)) ||   // Top horizontal
-                    ((x >= 260 && x <= 300) && (y >= 190 && y <= 210)) ||   // Middle horizontal
-                    ((x >= 300 && x <= 320) && (y >= 120 && y <= 190)) ||   // Right curve
-                    ((x >= 260 && x <= 320) && (y - 190 >= x - 440)))       // Lower diagonal
-            begin
-                red_4   = 4'hF;
-                green_4 = 4'h0;
-                blue_4  = 4'hF;
-            end
-            // Letter A
-            else if (((x >= 340 && x <= 400) && (y - 100 == (x - 340))) ||  // Left diagonal
-                    ((x >= 340 && x <= 400) && (y - 100 == -(x - 400))) ||  // Right diagonal
-                    ((x >= 360 && x <= 380) && (y >= 190 && y <= 210)))     // Middle horizontal
-            begin
-                red_4   = 4'hF;
-                green_4 = 4'h0;
-                blue_4  = 4'hF;
-            end
-            // Letter N
-            else if (((x >= 420 && x <= 440) && (y >= 100 && y <= 300)) ||  // Left vertical
-                    ((x >= 420 && x <= 480) && (y - 100 == (x - 420))) ||   // Diagonal
-                    ((x >= 480 && x <= 500) && (y >= 100 && y <= 300)))     // Right vertical
-            begin
-                red_4   = 4'hF;
-                green_4 = 4'h0;
-                blue_4  = 4'hF;
+                blue_4  = 4'h0;
             end
         end
     end
