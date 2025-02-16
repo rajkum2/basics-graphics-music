@@ -54,7 +54,7 @@ module lab_top # (
     always_comb begin
         red_4   = '0;
         green_4 = '0;
-        blue_4  = '0';
+        blue_4  = '0;
 
         if (x < screen_width && y < screen_height) begin
             // Define spaceship shape using simple geometric patterns
