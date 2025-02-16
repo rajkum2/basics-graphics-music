@@ -54,14 +54,23 @@ module lab_top # (
     always_comb begin
         red_4   = '0;
         green_4 = '0;
-        blue_4  = '0;
+        blue_4  = '0';
 
         if (x < screen_width && y < screen_height) begin
-            if ((x >= 50 && x <= 90 && y >= 100 && y <= 300) || 
-                (x >= 120 && x <= 160 && y >= 100 && y <= 300) ||
-                (x >= 190 && x <= 230 && y >= 100 && y <= 300) ||
-                (x >= 260 && x <= 300 && y >= 100 && y <= 300) ||
-                (x >= 330 && x <= 370 && y >= 100 && y <= 300)) begin
+            // Define bold letters for "Kiran"
+            if (((x >= 50  && x <= 70)  && (y >= 100 && y <= 300)) || // 'K' vertical
+                ((x >= 71  && x <= 90)  && (y >= 100 && y <= 150)) || // 'K' upper diagonal
+                ((x >= 71  && x <= 90)  && (y >= 250 && y <= 300)) || // 'K' lower diagonal
+                ((x >= 110 && x <= 130) && (y >= 100 && y <= 300)) || // 'I'
+                ((x >= 150 && x <= 170) && (y >= 100 && y <= 300)) || // 'R' vertical
+                ((x >= 171 && x <= 190) && (y >= 100 && y <= 150)) || // 'R' top horizontal
+                ((x >= 171 && x <= 190) && (y >= 175 && y <= 200)) || // 'R' middle horizontal
+                ((x >= 200 && x <= 220) && (y >= 100 && y <= 300)) || // 'A' vertical left
+                ((x >= 221 && x <= 240) && (y >= 100 && y <= 300)) || // 'A' vertical right
+                ((x >= 200 && x <= 240) && (y >= 175 && y <= 200)) || // 'A' middle horizontal
+                ((x >= 260 && x <= 280) && (y >= 100 && y <= 300)) || // 'N' left vertical
+                ((x >= 281 && x <= 300) && (y >= 100 && y <= 300)))   // 'N' right vertical
+            begin
                 red_4   = 4'hF;
                 green_4 = 4'h0;
                 blue_4  = 4'h0;
