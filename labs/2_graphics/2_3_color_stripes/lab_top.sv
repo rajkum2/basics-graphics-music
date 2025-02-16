@@ -57,15 +57,16 @@ module lab_top # (
         blue_4  = '0';
 
         if (x < screen_width && y < screen_height) begin
-            // Define spaceship shape
-            if (((x >= 280 && x <= 360) && (y >= 100 && y <= 180)) ||  // Top part of spaceship
-                ((x >= 260 && x <= 380) && (y >= 180 && y <= 220)) ||  // Middle wider body
-                ((x >= 240 && x <= 400) && (y >= 220 && y <= 260)) ||  // Bottom base of spaceship
-                ((x >= 300 && x <= 340) && (y >= 260 && y <= 320)) ||  // Rocket fire exhaust
-                ((x >= 280 && x <= 360) && (y >= 320 && y <= 350)))    // Extended fire trail
+            // Define spaceship shape using simple geometric patterns
+            if (((x >= 300 && x <= 340) && (y >= 100 && y <= 140)) ||  // Top triangle (Cockpit)
+                ((x >= 280 && x <= 360) && (y >= 140 && y <= 180)) ||  // Mid-body
+                ((x >= 260 && x <= 380) && (y >= 180 && y <= 220)) ||  // Lower-body
+                ((x >= 240 && x <= 400) && (y >= 220 && y <= 260)) ||  // Base of spaceship
+                ((x >= 290 && x <= 310) && (y >= 260 && y <= 300)) ||  // Left exhaust flame
+                ((x >= 330 && x <= 350) && (y >= 260 && y <= 300)))    // Right exhaust flame
             begin
                 red_4   = 4'hF;
-                green_4 = 4'h4;
+                green_4 = 4'h2;
                 blue_4  = 4'h0;
             end
         end
@@ -78,9 +79,9 @@ module lab_top # (
     `else
         generate
             if (w_red > 4 & w_green > 4 & w_blue > 4) begin
-                assign red   = { red_4   , { w_red   - 4 { 1'b0 } } };
-                assign green = { green_4 , { w_green - 4 { 1'b0 } } };
-                assign blue  = { blue_4  , { w_blue  - 4 { 1'b0 } } };
+                assign red   = { red_4   , { (w_red   - 4) {1'b0} } };
+                assign green = { green_4 , { (w_green - 4) {1'b0} } };
+                assign blue  = { blue_4  , { (w_blue  - 4) {1'b0} } };
             end else begin
                 assign red   = w_red'   ( red_4   );
                 assign green = w_green' ( green_4 );
