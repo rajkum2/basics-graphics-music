@@ -57,17 +57,51 @@ module lab_top # (
         blue_4  = '0;
 
         if (x < screen_width && y < screen_height) begin
-            // Define spaceship shape using simple geometric patterns
-            if (((x >= 300 && x <= 340) && (y >= 100 && y <= 140)) ||  // Top triangle (Cockpit)
-                ((x >= 280 && x <= 360) && (y >= 140 && y <= 180)) ||  // Mid-body
-                ((x >= 260 && x <= 380) && (y >= 180 && y <= 220)) ||  // Lower-body
-                ((x >= 240 && x <= 400) && (y >= 220 && y <= 260)) ||  // Base of spaceship
-                ((x >= 290 && x <= 310) && (y >= 260 && y <= 300)) ||  // Left exhaust flame
-                ((x >= 330 && x <= 350) && (y >= 260 && y <= 300)))    // Right exhaust flame
+            // Letter K
+            if (((x >= 100 && x <= 120) && (y >= 100 && y <= 300)) ||  // Vertical line
+                ((x >= 120 && x <= 180) && (y >= 190 && y <= 210)) ||  // Middle horizontal
+                ((x >= 120 && x <= 180) && (y - 190 <= -x + 300)) ||   // Upper diagonal
+                ((x >= 120 && x <= 180) && (y - 190 >= x - 300)))      // Lower diagonal
             begin
                 red_4   = 4'hF;
-                green_4 = 4'h2;
-                blue_4  = 4'h0;
+                green_4 = 4'h0;
+                blue_4  = 4'hF;
+            end
+            // Letter I
+            else if ((x >= 200 && x <= 220) && (y >= 100 && y <= 300))
+            begin
+                red_4   = 4'hF;
+                green_4 = 4'h0;
+                blue_4  = 4'hF;
+            end
+            // Letter R
+            else if (((x >= 240 && x <= 260) && (y >= 100 && y <= 300)) ||  // Vertical line
+                    ((x >= 260 && x <= 300) && (y >= 100 && y <= 120)) ||   // Top horizontal
+                    ((x >= 260 && x <= 300) && (y >= 190 && y <= 210)) ||   // Middle horizontal
+                    ((x >= 300 && x <= 320) && (y >= 120 && y <= 190)) ||   // Right curve
+                    ((x >= 260 && x <= 320) && (y - 190 >= x - 440)))       // Lower diagonal
+            begin
+                red_4   = 4'hF;
+                green_4 = 4'h0;
+                blue_4  = 4'hF;
+            end
+            // Letter A
+            else if (((x >= 340 && x <= 400) && (y - 100 == (x - 340))) ||  // Left diagonal
+                    ((x >= 340 && x <= 400) && (y - 100 == -(x - 400))) ||  // Right diagonal
+                    ((x >= 360 && x <= 380) && (y >= 190 && y <= 210)))     // Middle horizontal
+            begin
+                red_4   = 4'hF;
+                green_4 = 4'h0;
+                blue_4  = 4'hF;
+            end
+            // Letter N
+            else if (((x >= 420 && x <= 440) && (y >= 100 && y <= 300)) ||  // Left vertical
+                    ((x >= 420 && x <= 480) && (y - 100 == (x - 420))) ||   // Diagonal
+                    ((x >= 480 && x <= 500) && (y >= 100 && y <= 300)))     // Right vertical
+            begin
+                red_4   = 4'hF;
+                green_4 = 4'h0;
+                blue_4  = 4'hF;
             end
         end
     end
